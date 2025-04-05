@@ -71,15 +71,17 @@ namespace CTRPluginFramework
     int main() {
         const std::unique_ptr<PluginMenu> menu(new PluginMenu("CTRPF - ArrayList", 1, 0, 0, ""));
 
-        ArrayList arraylist = ArrayList(20, Color::White, Color::Black);
+        ArrayList* const arraylist = new ArrayList(20, Color::White, Color::Black);
         
         menu->SynchronizeWithFrame(true);
         
         InitMenu(*menu);
 
-        arraylist.Run();
+        arraylist->Run();
 
         menu->Run();
+
+        delete arraylist;
 
         return 0;
     }
