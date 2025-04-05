@@ -35,7 +35,7 @@ namespace CTRPluginFramework
         std::vector<std::string> Items;
         bool  showArrayList;
         bool  showFrame;
-        u32	  MaxSize;
+        u32	MaxSize;
 
         Color foreground;
         Color background;
