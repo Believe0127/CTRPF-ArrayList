@@ -48,25 +48,23 @@ namespace CTRPluginFramework
             SortByStringLength(instance->Items);
         }
     }
-    
+
     void ArrayList::Clear() noexcept {
         instance->Items.clear();
     }
 
     void ArrayList::Hide() noexcept {
-        if (!instance->showArrayList)
-            return;
-        
-        OSD::Stop(ArrayListOSDCallback);
-        instance->showArrayList = false;
+        if (instance->showArrayList) {
+            OSD::Stop(ArrayListOSDCallback);
+            instance->showArrayList = false;
+        }
     };
     
     void ArrayList::Show() noexcept {
-        if (instance->showArrayList)
-            return;
-
-        OSD::Run(ArrayListOSDCallback);
-        instance->showArrayList = true;
+        if (!instance->showArrayList) {
+            OSD::Run(ArrayListOSDCallback);
+            instance->showArrayList = true;
+        }
     }
 
     Color& ArrayList::foregroundColor() noexcept {
@@ -100,7 +98,7 @@ namespace CTRPluginFramework
                         }
                         
                         const auto nextIt = std::next(it);
-                        for (u32 x = newPosX, endX = nextIt == end ? TOPSCREEN_WIDTH : alignToRightEdge(*nextIt); x < endX; ++x) {
+                        for (u32 x = newPosX, endX = (nextIt == end ? TOPSCREEN_WIDTH : alignToRightEdge(*nextIt)); x < endX; ++x) {
                             scr.DrawPixel(x, posY, instance->frame);
                         }
                     }
