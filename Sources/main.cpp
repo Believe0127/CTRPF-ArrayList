@@ -1,6 +1,7 @@
 #include "ArrayList.hpp"
 
 namespace CTRPluginFramework {
+
     // ArrayList usage example
     void test(MenuEntry* entry) {
         if (entry->WasJustActivated()) {
@@ -29,5 +30,7 @@ namespace CTRPluginFramework {
 
         return 0;
     }
-}
+
+} // namespace CTRPluginFramework {
+
 
