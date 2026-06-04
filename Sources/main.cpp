@@ -3,7 +3,7 @@
 namespace CTRPluginFramework {
 
     // ArrayList usage example
-    void test(MenuEntry* entry) {
+    void Test(MenuEntry* entry) {
         if (entry->WasJustActivated()) {
             ArrayList::Add(entry->Name());
         }
@@ -13,7 +13,7 @@ namespace CTRPluginFramework {
     }
     
     void InitMenu(PluginMenu& menu) {     
-        menu += new MenuEntry("test", test, "");
+        menu += new MenuEntry("Test", Test, "");
     }
     
     int main() {
@@ -31,6 +31,6 @@ namespace CTRPluginFramework {
         return 0;
     }
 
-} // namespace CTRPluginFramework {
+} // namespace CTRPluginFramework
 
 
