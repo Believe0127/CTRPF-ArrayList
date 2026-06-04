@@ -3,9 +3,12 @@
 #include <CTRPluginFramework.hpp>
 #define TOPSCREEN_WIDTH 400
 
-namespace CTRPluginFramework 
-{
+namespace CTRPluginFramework {
+
     class ArrayList {
+        static void SortByStringLength(std::vector<std::string>& vec) noexcept;
+        static u32  AlignToRightEdge(const std::string& str)          noexcept;
+        static bool ArrayListOSDCallback(const Screen& scr)           noexcept;
     public:
         explicit ArrayList(void) : MaxSize(24), foreground(Color::White), background(Color::Black), showArrayList(true), showFrame(true), frame(Color::White) {}
         explicit ArrayList(const u32 MaxSize, const Color& foreground, const Color& background, const bool showFrame = true, const Color& frame = Color::White);
@@ -27,18 +30,15 @@ namespace CTRPluginFramework
     private:
         static ArrayList* instance;
 
-        static void SortByStringLength(std::vector<std::string>& vec) noexcept;
-        static u32  alignToRightEdge(const std::string& str) noexcept;
-        
-        static bool ArrayListOSDCallback(const Screen& scr) noexcept;
-
         std::vector<std::string> Items;
-        bool  showArrayList;
-        bool  showFrame;
-        u32	  MaxSize;
-
+        u32 MaxSize;
+        
         Color foreground;
         Color background;
         Color frame;
+
+        bool  showArrayList;
+        bool  showFrame;
     };
-}
+
+} // namespace CTRPluginFramework
