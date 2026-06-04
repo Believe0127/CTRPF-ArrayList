@@ -6,8 +6,8 @@
 
 namespace CTRPluginFramework {
 
-// This patch the NFC disabling the touchscreen when scanning an amiibo, which prevents ctrpf to be used
-    static void    ToggleTouchscreenForceOn(void)
+    // This patch the NFC disabling the touchscreen when scanning an amiibo, which prevents ctrpf to be used
+    static void ToggleTouchscreenForceOn(void)
     {
         static u32 original = 0;
         static u32 *patchAddress = nullptr;
@@ -29,7 +29,6 @@ namespace CTRPluginFramework {
         Handle  processHandle;
         s64     textTotalSize = 0;
         s64     startAddress = 0;
-        u32 *   found;
 
         if (R_FAILED(svcOpenProcess(&processHandle, 16)))
             return;
@@ -39,10 +38,9 @@ namespace CTRPluginFramework {
         if(R_FAILED(svcMapProcessMemoryEx(CUR_PROCESS_HANDLE, 0x14000000, processHandle, (u32)startAddress, textTotalSize)))
             goto exit;
 
-        found = (u32 *)Utils::Search<u32>(0x14000000, (u32)textTotalSize, pattern);
+        u32* const found = (u32 *)Utils::Search<u32>(0x14000000, (u32)textTotalSize, pattern);
 
-        if (found != nullptr)
-        {
+        if (found) {
             original = found[13];
             patchAddress = (u32 *)PA_FROM_VA((found + 13));
             found[13] = 0xE1A00000;
@@ -53,12 +51,12 @@ exit:
         svcCloseHandle(processHandle);
     }
     
-    void    PatchProcess(FwkSettings &settings)
+    void PatchProcess(FwkSettings &settings)
     {
         ToggleTouchscreenForceOn();
     }
 
-    void    OnProcessExit(void)
+    void OnProcessExit(void)
     {
         ToggleTouchscreenForceOn();
     }
