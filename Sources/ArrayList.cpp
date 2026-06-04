@@ -118,7 +118,7 @@ namespace CTRPluginFramework
         );
     }
 
-    u32 ArrayList::alignToRightEdge(const std::string& str) noexcept {
+    u32 ArrayList::AlignToRightEdge(const std::string& str) noexcept {
         return TOPSCREEN_WIDTH - (str.length() * 6.1f);
     }
 }
