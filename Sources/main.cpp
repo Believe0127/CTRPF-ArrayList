@@ -11,14 +11,14 @@ namespace CTRPluginFramework
             ArrayList::Instance().Remove(entry->Name());
         }
     }
-    
+
     void InitMenu(PluginMenu& menu) {
-        menu += new MenuEntry("ABCDEFGH", Test, "");
-        menu += new MenuEntry("0x123456789", Test, "");
-        menu += new MenuEntry("123456789", Test, "");
-        menu += new MenuEntry("Hello World!!", Test, "");
+        menu += new MenuEntry("Coordinate Movement", Test, "");
+        menu += new MenuEntry("Map Editor", Test, "");
+        menu += new MenuEntry("Moon Jump", Test, "");
+        menu += new MenuEntry("Speed", Test, "");
     }
-    
+
     int main() {
         auto* menu = new PluginMenu("CTRPF - ArrayList", 1, 0, 0);
         menu->SynchronizeWithFrame(true);
@@ -26,7 +26,7 @@ namespace CTRPluginFramework
         ArrayList::CreateInstance(20, Color::White, Color::Black, Color::White);
         ArrayList::Instance().ShowFrame();
         ArrayList::Instance().Show();
-        
+
         InitMenu(*menu);
 
         menu->Run();
