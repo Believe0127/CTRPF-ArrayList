@@ -1,0 +1,14 @@
+Author: Believe
+
+Version: # Plugin version
+    Major: 0
+    Minor: 7
+    Revision: 4
+
+Targets: # Low TitleId of games which are compatibles with this plugin (0 for all)
+
+Title: CTRPF - ArrayList
+
+Compatibility: Any
+
+MemorySize: 5MiB

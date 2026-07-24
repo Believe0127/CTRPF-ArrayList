@@ -10,7 +10,7 @@ include $(DEVKITARM)/3ds_rules
 CTRPFLIB	?=	$(DEVKITPRO)/libctrpf
 
 TARGET		:= 	ArrayList
-PLGINFO 	:= 	CTRPluginFramework.plgInfo
+PLGINFO 	:= 	ArrayList.plgInfo
 
 BUILD		:= 	Build
 INCLUDES	:= 	Includes
@@ -21,7 +21,7 @@ SOURCES 	:= 	Sources
 #---------------------------------------------------------------------------------
 ARCH		:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
-CFLAGS		:=	$(ARCH) -Os -mword-relocations \
+CFLAGS		:=	$(ARCH) -O2 -mword-relocations \
 				-fomit-frame-pointer -ffunction-sections -fno-strict-aliasing
 
 CFLAGS		+=	$(INCLUDE) -D__3DS__
@@ -29,7 +29,7 @@ CFLAGS		+=	$(INCLUDE) -D__3DS__
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++20
 
 ASFLAGS		:=	$(ARCH)
-LDFLAGS		:= -T $(TOPDIR)/3gx.ld $(ARCH) -Os -Wl,--gc-sections,--strip-discarded,--strip-debug
+LDFLAGS		:= -T $(TOPDIR)/3gx.ld $(ARCH) -O2 -Wl,--gc-sections,--strip-discarded,--strip-debug
 
 LIBS		:= -lctrpf -lctru
 LIBDIRS		:= 	$(CTRPFLIB) $(CTRULIB) $(PORTLIBS)

@@ -1,105 +1,47 @@
 #include "ArrayList.hpp"
 
+#include <ranges>
+
 namespace CTRPluginFramework 
 {    
     ArrayList* ArrayList::instance = nullptr;
-    
-    ArrayList::ArrayList(const u32 MaxSize, const Color& foreground, const Color& background, const bool showFrame, const Color& frame)
-        : MaxSize(MaxSize), foreground(foreground), background(background), showArrayList(true), showFrame(showFrame), frame(frame)
+
+    ArrayList::ArrayList(size_t maxSize, const Color& foreground, const Color& background, const Color& frame) noexcept
+        : items{}
+        , maxSize(maxSize)
+        , foreground(foreground) 
+        , background(background) 
+        , frame(frame)
+        , showArrayList(false) 
+        , showFrame(false) 
     {}
 
-    ArrayList::~ArrayList(void) {
-        OSD::Stop(ArrayListOSDCallback);
-        instance = nullptr;
+    ArrayList::~ArrayList() noexcept {
+        Hide();
     }
 
-    void ArrayList::Run() noexcept {
-        instance = this;
-        OSD::Run(ArrayListOSDCallback);
-    }
-
-    void ArrayList::Add(const std::string& name) noexcept {
-        bool SameStringExists = false;
-
-        if (!name.empty() && instance->Items.size() < instance->MaxSize) {
-            for (const auto& i : instance->Items) {
-                if (i == name) {
-                    SameStringExists = true;
-                    break;
-                } 
-            }
-
-            if (!SameStringExists) {
-                instance->Items.emplace_back(name);
-                
-                SortByStringLength(instance->Items);
-            }
-        }
-    }
-    
-    void ArrayList::Remove(const std::string& name) noexcept {
-        if (!instance->Items.empty() && !name.empty()) {
-            for (auto it = instance->Items.begin(), end = instance->Items.end(); it != end; ++it) {
-                if (name == *it) {
-                    instance->Items.erase(it);
-                    break;
-                }
-            }
-            SortByStringLength(instance->Items);
-        }
-    }
-
-    void ArrayList::Clear() noexcept {
-        instance->Items.clear();
-    }
-
-    void ArrayList::Hide() noexcept {
-        if (instance->showArrayList) {
-            OSD::Stop(ArrayListOSDCallback);
-            instance->showArrayList = false;
-        }
-    };
-    
-    void ArrayList::Show() noexcept {
-        if (!instance->showArrayList) {
-            OSD::Run(ArrayListOSDCallback);
-            instance->showArrayList = true;
-        }
-    }
-
-    Color& ArrayList::foregroundColor() noexcept {
-        return instance->foreground;
-    }
-    
-    Color& ArrayList::backgroundColor() noexcept {
-        return instance->background;
-    }
-
-    Color& ArrayList::frameColor() noexcept {
-        return instance->frame;
-    }
-
-    bool ArrayList::ArrayListOSDCallback(const Screen& scr) noexcept {
-        if (instance->showArrayList && !instance->Items.empty()) {
+    bool ArrayList::DrawArrayListOSDCallback(const Screen& scr) noexcept 
+    {
+        const auto& self = ArrayList::Instance(); 
+        if (self.showArrayList && !self.items.empty()) {
             if (scr.IsTop) {
                 u32 posY = 0;
-                
-                for (auto it = instance->Items.begin(), end = instance->Items.end(); it != end; ++it) {
-                    const u32 posX = alignToRightEdge(*it);
+                for (auto it = self.items.begin(), end = self.items.end(); it != end; ++it) {
+                    const u32 posX = AlignToRightEdge(*it);
 
-                    posY = scr.Draw(*it, posX, posY, instance->foreground, instance->background);
-
+                    posY = scr.Draw(*it, posX, posY, self.foreground, self.background);
+                    
                     // Draw Frame
-                    if (instance->showFrame) {
-                        const u32  newPosX = posX - 1;
-                        
+                    if (self.showFrame) {
+                        const u32 newPosX = posX - 1;
+
                         for (u32 y = posY - 10; y < posY; ++y) {
-                            scr.DrawPixel(newPosX, y, instance->frame);
+                            scr.DrawPixel(newPosX, y, self.frame);
                         }
                         
                         const auto nextIt = std::next(it);
-                        for (u32 x = newPosX, endX = (nextIt == end ? TOPSCREEN_WIDTH : alignToRightEdge(*nextIt)); x < endX; ++x) {
-                            scr.DrawPixel(x, posY, instance->frame);
+                        for (u32 x = newPosX, endX = (nextIt == end ? TOPSCREEN_WIDTH : AlignToRightEdge(*nextIt)); x < endX; ++x) {
+                            scr.DrawPixel(x, posY, self.frame);
                         }
                     }
                 }
@@ -108,17 +50,71 @@ namespace CTRPluginFramework
         return true;
     }
 
-    void ArrayList::SortByStringLength(std::vector<std::string>& vec) noexcept {
-        std::sort(
-             vec.begin()
-            ,vec.end()
-            ,[](const std::string& str1, const std::string& str2) {
-                return str1.size() > str2.size(); 
-            }
-        );
+    void ArrayList::Add(const std::string& name) noexcept 
+    {
+        if (!name.empty() && items.size() < maxSize) {
+            const auto insert_pos = std::ranges::find_if(
+                items, 
+                [len = name.length()](const std::string& str) -> bool {
+                    return str.length() < len;
+                }
+            );
+            items.insert(insert_pos, name);
+        }
+    }
+    
+    void ArrayList::Remove(const std::string& name) noexcept 
+    {
+        if (!name.empty() && !items.empty()) {
+            std::erase_if(items, 
+                [&name](const std::string& str) -> bool {
+                    return str == name;
+                }
+            );
+        }
     }
 
+    void ArrayList::Clear() noexcept {
+        items.clear();
+    }
+
+    void ArrayList::Hide() noexcept 
+    {
+        if (showArrayList) {
+            OSD::Stop(DrawArrayListOSDCallback);
+            showArrayList = false;
+        }
+    }
+    
+    void ArrayList::Show() noexcept 
+    {
+        if (!showArrayList) {
+            OSD::Run(DrawArrayListOSDCallback);
+            showArrayList = true;
+        }
+    }
+
+    void ArrayList::ShowFrame() noexcept {
+        showFrame = true;
+    }
+
+    void ArrayList::HideFrame() noexcept {
+        showFrame = false;
+    }
+
+    Color& ArrayList::ForegroundColor() noexcept {
+        return foreground;
+    }
+    
+    Color& ArrayList::BackgroundColor() noexcept {
+        return background;
+    }
+
+    Color& ArrayList::FrameColor() noexcept {
+        return frame;
+    }
+    
     u32 ArrayList::AlignToRightEdge(const std::string& str) noexcept {
-        return TOPSCREEN_WIDTH - (str.length() * 6.1f);
+        return TOPSCREEN_WIDTH - (str.length() * 6) - 2;
     }
 }
