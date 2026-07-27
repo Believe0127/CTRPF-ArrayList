@@ -2,27 +2,27 @@
 
 #include <ranges>
 
-namespace CTRPluginFramework 
-{    
+namespace CTRPluginFramework
+{
     ArrayList* ArrayList::instance = nullptr;
 
     ArrayList::ArrayList(size_t maxSize, const Color& foreground, const Color& background, const Color& frame) noexcept
         : items{}
         , maxSize(maxSize)
-        , foreground(foreground) 
-        , background(background) 
+        , foreground(foreground)
+        , background(background)
         , frame(frame)
-        , showArrayList(false) 
-        , showFrame(false) 
+        , showArrayList(false)
+        , showFrame(false)
     {}
 
     ArrayList::~ArrayList() noexcept {
         Hide();
     }
 
-    bool ArrayList::DrawArrayListOSDCallback(const Screen& scr) noexcept 
+    bool ArrayList::DrawArrayListOSDCallback(const Screen& scr) noexcept
     {
-        const auto& self = ArrayList::Instance(); 
+        const auto& self = ArrayList::Instance();
         if (self.showArrayList && !self.items.empty()) {
             if (scr.IsTop) {
                 u32 posY = 0;
@@ -30,7 +30,7 @@ namespace CTRPluginFramework
                     const u32 posX = AlignToRightEdge(*it);
 
                     posY = scr.Draw(*it, posX, posY, self.foreground, self.background);
-                    
+
                     // Draw Frame
                     if (self.showFrame) {
                         const u32 newPosX = posX - 1;
@@ -38,7 +38,7 @@ namespace CTRPluginFramework
                         for (u32 y = posY - 10; y < posY; ++y) {
                             scr.DrawPixel(newPosX, y, self.frame);
                         }
-                        
+
                         const auto nextIt = std::next(it);
                         for (u32 x = newPosX, endX = (nextIt == end ? TOPSCREEN_WIDTH : AlignToRightEdge(*nextIt)); x < endX; ++x) {
                             scr.DrawPixel(x, posY, self.frame);
@@ -50,11 +50,11 @@ namespace CTRPluginFramework
         return true;
     }
 
-    void ArrayList::Add(const std::string& name) noexcept 
+    void ArrayList::Add(const std::string& name) noexcept
     {
         if (!name.empty() && items.size() < maxSize) {
             const auto insert_pos = std::ranges::find_if(
-                items, 
+                items,
                 [len = name.length()](const std::string& str) -> bool {
                     return str.length() < len;
                 }
@@ -62,11 +62,11 @@ namespace CTRPluginFramework
             items.insert(insert_pos, name);
         }
     }
-    
-    void ArrayList::Remove(const std::string& name) noexcept 
+
+    void ArrayList::Remove(const std::string& name) noexcept
     {
         if (!name.empty() && !items.empty()) {
-            std::erase_if(items, 
+            std::erase_if(items,
                 [&name](const std::string& str) -> bool {
                     return str == name;
                 }
@@ -78,15 +78,15 @@ namespace CTRPluginFramework
         items.clear();
     }
 
-    void ArrayList::Hide() noexcept 
+    void ArrayList::Hide() noexcept
     {
         if (showArrayList) {
             OSD::Stop(DrawArrayListOSDCallback);
             showArrayList = false;
         }
     }
-    
-    void ArrayList::Show() noexcept 
+
+    void ArrayList::Show() noexcept
     {
         if (!showArrayList) {
             OSD::Run(DrawArrayListOSDCallback);
@@ -105,7 +105,7 @@ namespace CTRPluginFramework
     Color& ArrayList::ForegroundColor() noexcept {
         return foreground;
     }
-    
+
     Color& ArrayList::BackgroundColor() noexcept {
         return background;
     }
@@ -113,7 +113,7 @@ namespace CTRPluginFramework
     Color& ArrayList::FrameColor() noexcept {
         return frame;
     }
-    
+
     u32 ArrayList::AlignToRightEdge(const std::string& str) noexcept {
         return TOPSCREEN_WIDTH - (str.length() * 6) - 2;
     }

@@ -31,6 +31,7 @@ namespace CTRPluginFramework
 
         menu->Run();
 
+        ArrayList::DestroyInstance();
         delete menu;
         return 0;
     }
