@@ -24,7 +24,7 @@ namespace CTRPluginFramework
         menu->SynchronizeWithFrame(true);
 
         ArrayList::CreateInstance(20, Color::White, Color::Black, Color::White);
-        ArrayList::Instance().ShowFrame();
+        ArrayList::Instance().ShowBorder();
         ArrayList::Instance().Show();
 
         InitMenu(*menu);

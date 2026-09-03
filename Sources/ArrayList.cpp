@@ -6,14 +6,14 @@ namespace CTRPluginFramework
 {
     ArrayList* ArrayList::instance = nullptr;
 
-    ArrayList::ArrayList(size_t maxSize, const Color& foreground, const Color& background, const Color& frame) noexcept
+    ArrayList::ArrayList(size_t maxSize, const Color& foreground, const Color& background, const Color& border) noexcept
         : items{}
         , maxSize(maxSize)
         , foreground(foreground)
         , background(background)
-        , frame(frame)
+        , border(border)
         , showArrayList(false)
-        , showFrame(false)
+        , showBorder(false)
     {}
 
     ArrayList::~ArrayList() noexcept {
@@ -31,17 +31,17 @@ namespace CTRPluginFramework
 
                     posY = scr.Draw(*it, posX, posY, self.foreground, self.background);
 
-                    // Draw Frame
-                    if (self.showFrame) {
+                    // Draw border
+                    if (self.showBorder) {
                         const u32 newPosX = posX - 1;
 
                         for (u32 y = posY - 10; y < posY; ++y) {
-                            scr.DrawPixel(newPosX, y, self.frame);
+                            scr.DrawPixel(newPosX, y, self.border);
                         }
 
                         const auto nextIt = std::next(it);
                         for (u32 x = newPosX, endX = (nextIt == end ? TOPSCREEN_WIDTH : AlignToRightEdge(*nextIt)); x < endX; ++x) {
-                            scr.DrawPixel(x, posY, self.frame);
+                            scr.DrawPixel(x, posY, self.border);
                         }
                     }
                 }
@@ -94,24 +94,24 @@ namespace CTRPluginFramework
         }
     }
 
-    void ArrayList::ShowFrame() noexcept {
-        showFrame = true;
+    void ArrayList::ShowBorder() noexcept {
+        showBorder = true;
     }
 
-    void ArrayList::HideFrame() noexcept {
-        showFrame = false;
+    void ArrayList::HideBorder() noexcept {
+        showBorder = false;
     }
 
-    Color& ArrayList::ForegroundColor() noexcept {
+    Color& ArrayList::Foreground() noexcept {
         return foreground;
     }
 
-    Color& ArrayList::BackgroundColor() noexcept {
+    Color& ArrayList::Background() noexcept {
         return background;
     }
 
-    Color& ArrayList::FrameColor() noexcept {
-        return frame;
+    Color& ArrayList::Border() noexcept {
+        return border;
     }
 
     u32 ArrayList::AlignToRightEdge(const std::string& str) noexcept {

@@ -4,15 +4,15 @@
 
 #define TOPSCREEN_WIDTH 400
 
-namespace CTRPluginFramework 
+namespace CTRPluginFramework
 {
     // Singleton Class
     class ArrayList {
-        ArrayList(size_t maxSize, const Color& foreground, const Color& background, const Color& frame) noexcept;
-        ~ArrayList()                                                                                    noexcept;
+        ArrayList(size_t maxSize, const Color& foreground, const Color& background, const Color& border) noexcept;
+        ~ArrayList()                                                                                     noexcept;
 
         static bool DrawArrayListOSDCallback(const Screen& scr) noexcept;
-        static u32  AlignToRightEdge(const std::string& str)    noexcept;       
+        static u32  AlignToRightEdge(const std::string& str)    noexcept;
     public:
         template <class... Args>
         static void CreateInstance(Args&&... args) noexcept {
@@ -29,30 +29,30 @@ namespace CTRPluginFramework
         static ArrayList& Instance() noexcept {
             return *instance;
         }
-        
+
         void Add(const std::string& name)    noexcept;
         void Remove(const std::string& name) noexcept;
         void Clear()                         noexcept;
-        
+
         void Hide()      noexcept;
         void Show()      noexcept;
-        void ShowFrame() noexcept;
-        void HideFrame() noexcept;
+        void ShowBorder() noexcept;
+        void HideBorder() noexcept;
 
-        Color& ForegroundColor() noexcept;
-        Color& BackgroundColor() noexcept;
-        Color& FrameColor()      noexcept;
+        Color& Foreground() noexcept;
+        Color& Background() noexcept;
+        Color& Border()     noexcept;
     private:
         static ArrayList* instance;
-        
+
         std::vector<std::string> items;
         size_t maxSize;
-        
+
         Color foreground;
         Color background;
-        Color frame;
+        Color border;
 
         bool showArrayList;
-        bool showFrame;
+        bool showBorder;
     };
 }

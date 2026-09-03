@@ -1,2 +1,7 @@
 /Build
+.zed/
+.vscode/
+.clangd
+compile_flags.txt
 *.3gx
+*.elf
